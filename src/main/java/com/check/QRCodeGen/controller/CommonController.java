@@ -26,15 +26,10 @@ public class CommonController {
     }
 
 
-        @GetMapping(value = "qrGenerator/{barcode}", produces = MediaType.IMAGE_PNG_VALUE)
-        public BufferedImage barbecueEAN13Barcode(@PathVariable("barcode") String barcode) throws WriterException, IOException {
-             return qrCodeDetailsService.qrGenerator(barcode);
-        }
-
-
-
-
-
+    @GetMapping(value = "qrGenerator/{customer_number}", produces = MediaType.IMAGE_PNG_VALUE)
+    public BufferedImage barbecueEAN13Barcode(@PathVariable("customer_number") String barcode) throws WriterException, IOException {
+        return qrCodeDetailsService.qrGenerator(barcode);
+    }
 
 
 }
