@@ -1,13 +1,11 @@
 package com.check.QRCodeGen.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.core.io.InputStreamResource;
 
 import java.util.UUID;
 
@@ -30,5 +28,6 @@ public class QRCodeDetails {
     private String customer_bank;
     private String customer_bank_code;
 
-    private String qrCodes;
+    @Lob
+    private byte[] qrCodes;
 }

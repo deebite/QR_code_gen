@@ -4,7 +4,9 @@ import com.check.QRCodeGen.entities.QRCodeDetails;
 import com.check.QRCodeGen.service.QRCodeDetailsService;
 import com.check.QRCodeGen.service.impl.QRCodeqDetailsServiceImpl;
 import com.google.zxing.WriterException;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +28,8 @@ public class CommonController {
     }
 
 
-    @GetMapping(value = "qrGenerator/{customer_number}", produces = MediaType.IMAGE_PNG_VALUE)
-    public BufferedImage barbecueEAN13Barcode(@PathVariable("customer_number") String barcode) throws WriterException, IOException {
+    @GetMapping(value = "qrGenerator/{customer_number}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> barbecueEAN13Barcode(@PathVariable("customer_number") String barcode) throws WriterException, IOException, DocumentException {
         return qrCodeDetailsService.qrGenerator(barcode);
     }
 
