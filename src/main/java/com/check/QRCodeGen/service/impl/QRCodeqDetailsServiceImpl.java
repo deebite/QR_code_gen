@@ -57,7 +57,7 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
 
     public InputStreamResource qrGenerator(String str) throws WriterException, IOException, DocumentException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(str, BarcodeFormat.QR_CODE, 500, 500);
+        BitMatrix bitMatrix = qrCodeWriter.encode(str, BarcodeFormat.QR_CODE, 250, 250);
 
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
 
