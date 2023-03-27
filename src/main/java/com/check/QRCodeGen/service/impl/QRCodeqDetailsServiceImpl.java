@@ -69,6 +69,7 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         fileOutputStream.write(pngData);
         QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(str);
         qrCodeDetails.setQrCodes(pngOutputStream.toByteArray());
+        qrCodeDetailsRepository.save(qrCodeDetails);
         fileOutputStream.close();
 
         inputStreamResource = pdfGenerator.InputStreamResource(pngData);
