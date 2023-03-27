@@ -42,6 +42,7 @@ public class PDFGenerator {
         document.add(Chunk.NEWLINE);
 
         Image image = Image.getInstance(pngData);
+
         image.scaleAbsolute(170f, 170f);
         image.setAlignment(Element.ALIGN_CENTER);
 

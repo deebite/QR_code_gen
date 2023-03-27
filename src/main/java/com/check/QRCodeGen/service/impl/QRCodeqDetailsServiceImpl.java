@@ -14,15 +14,15 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
 
 @Service
 public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
@@ -36,14 +36,14 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
     @Autowired
     private PDFGenerator pdfGenerator;
 
-    public  static String die = "PDF417_DIMENSIONS";
+    public static String die = "PDF417_DIMENSIONS";
 
-    public static  String localPath = "";
+    public static String localPath = "D:\\Amardeep CV\\QRCodes\\";
 
     InputStreamResource inputStreamResource;
 
     @Override
-    public QRCodeDetails saveCustomerDetails(QRCodeDetails qrCodeDetails) {
+    public ResponseEntity<InputStreamResource> saveCustomerDetails(QRCodeDetails qrCodeDetails) throws DocumentException, IOException, WriterException {
         QRCodeDetails customerDetails = new QRCodeDetails();
         customerDetails.setCustomer_name(qrCodeDetails.getCustomer_name());
         customerDetails.setNumber(qrCodeDetails.getNumber());
@@ -51,24 +51,28 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         customerDetails.setCustomer_address(qrCodeDetails.getCustomer_address());
         customerDetails.setCustomer_bank_code(qrCodeDetails.getCustomer_bank_code());
         qrCodeDetailsRepository.save(qrCodeDetails);
-        return qrCodeDetails;
+        return ResponseEntity.ok().body(qrGenerator(qrCodeDetails.getNumber()));
     }
 
-    @Override
-    public ResponseEntity<InputStreamResource> qrGenerator(String str) throws WriterException, IOException, DocumentException {
+
+    public InputStreamResource qrGenerator(String str) throws WriterException, IOException, DocumentException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(str, BarcodeFormat.QR_CODE, 200, 200);
+        BitMatrix bitMatrix = qrCodeWriter.encode(str, BarcodeFormat.QR_CODE, 500, 500);
 
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
-        MatrixToImageConfig con = new MatrixToImageConfig( 0xFF000002 , 0xFFFFC041 ) ;
-        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream,con);
+
+        MatrixToImageConfig con = new MatrixToImageConfig(0xFF000002, 0xFFFFC041);
+        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, con);
         byte[] pngData = pngOutputStream.toByteArray();
 
-         inputStreamResource = pdfGenerator.InputStreamResource(pngData);
-         QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(str);
-         qrCodeDetails.setQrCodes(inputStreamResource.getInputStream().readAllBytes());
+        FileOutputStream fileOutputStream = new FileOutputStream(localPath + str + ".png");
+        fileOutputStream.write(pngData);
+        QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(str);
+        qrCodeDetails.setQrCodes(pngOutputStream.toByteArray());
+        fileOutputStream.close();
+
         inputStreamResource = pdfGenerator.InputStreamResource(pngData);
-        return ResponseEntity.ok().body(inputStreamResource);
+        return inputStreamResource;
     }
 
 
