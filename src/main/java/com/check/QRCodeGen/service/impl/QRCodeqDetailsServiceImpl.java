@@ -22,18 +22,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.*;
 
 @Service
 public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
 
     @Autowired
     private QRCodeDetailsRepository qrCodeDetailsRepository;
-
-    @Autowired
-    private PostManImagePrinter postManImagePrinter;
-
     @Autowired
     private PDFGenerator pdfGenerator;
     @Value("${localpath.config}")
@@ -64,7 +58,7 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, con);
         byte[] pngData = pngOutputStream.toByteArray();
 
-        File directoryPath = new File(localpath+ str + ".png");
+        File directoryPath = new File(localpath + str + ".png");
         FileOutputStream fileOutputStream = new FileOutputStream(directoryPath);
         fileOutputStream.write(pngData);
         QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(str);
