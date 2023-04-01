@@ -13,6 +13,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,8 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
 
     @Autowired
     private PDFGenerator pdfGenerator;
-
-    public static String die = "PDF417_DIMENSIONS";
-
-    public static String localPath = "D:\\Amardeep CV\\QRCodes\\";
+    @Value("${localpath.config}")
+    private String localpath;
 
     InputStreamResource inputStreamResource;
 
@@ -65,7 +64,8 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, con);
         byte[] pngData = pngOutputStream.toByteArray();
 
-        FileOutputStream fileOutputStream = new FileOutputStream(localPath + str + ".png");
+        File directoryPath = new File(localpath+ str + ".png");
+        FileOutputStream fileOutputStream = new FileOutputStream(directoryPath);
         fileOutputStream.write(pngData);
         QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(str);
         qrCodeDetails.setQrCodes(pngOutputStream.toByteArray());
