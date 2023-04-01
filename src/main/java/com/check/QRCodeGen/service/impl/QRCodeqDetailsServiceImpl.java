@@ -44,13 +44,13 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         customerDetails.setCustomer_address(qrCodeDetails.getCustomer_address());
         customerDetails.setCustomer_bank_code(qrCodeDetails.getCustomer_bank_code());
         qrCodeDetailsRepository.save(qrCodeDetails);
-        return ResponseEntity.ok().body(qrGenerator(qrCodeDetails.getNumber()));
+        return ResponseEntity.ok().body(qrGenerator(customerDetails));
     }
 
 
-    public InputStreamResource qrGenerator(String str) throws WriterException, IOException, DocumentException {
+    public InputStreamResource qrGenerator(QRCodeDetails customerDetails) throws WriterException, IOException, DocumentException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(str, BarcodeFormat.QR_CODE, 250, 250);
+        BitMatrix bitMatrix = qrCodeWriter.encode(String.valueOf(customerDetails), BarcodeFormat.QR_CODE, 250, 250);
 
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
 
@@ -58,10 +58,10 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, con);
         byte[] pngData = pngOutputStream.toByteArray();
 
-        File directoryPath = new File(localpath + str + ".png");
+        File directoryPath = new File(localpath + customerDetails.getNumber() + ".png");
         FileOutputStream fileOutputStream = new FileOutputStream(directoryPath);
         fileOutputStream.write(pngData);
-        QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(str);
+        QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(customerDetails.getNumber());
         qrCodeDetails.setQrCodes(pngOutputStream.toByteArray());
         qrCodeDetailsRepository.save(qrCodeDetails);
         fileOutputStream.close();
