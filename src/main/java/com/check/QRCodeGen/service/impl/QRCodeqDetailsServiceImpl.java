@@ -12,6 +12,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.text.DocumentException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -24,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Service
+@Slf4j
 public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
 
     @Autowired
@@ -44,7 +46,13 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         customerDetails.setCustomer_address(qrCodeDetails.getCustomer_address());
         customerDetails.setCustomer_bank_code(qrCodeDetails.getCustomer_bank_code());
         qrCodeDetailsRepository.save(qrCodeDetails);
+        log.info("Customer Details saved Successfully!");
         return ResponseEntity.ok().body(qrGenerator(customerDetails));
+    }
+
+    @Override
+    public void printAspect() {
+        System.out.println("Hello To Every one I am QR Code Generator");
     }
 
 
@@ -59,11 +67,13 @@ public class QRCodeqDetailsServiceImpl implements QRCodeDetailsService {
         byte[] pngData = pngOutputStream.toByteArray();
 
         File directoryPath = new File(localpath + customerDetails.getNumber() + ".png");
+        log.info("File saved at the local directory successfully in PNG format!");
         FileOutputStream fileOutputStream = new FileOutputStream(directoryPath);
         fileOutputStream.write(pngData);
         QRCodeDetails qrCodeDetails = qrCodeDetailsRepository.findByNumber(customerDetails.getNumber());
         qrCodeDetails.setQrCodes(pngOutputStream.toByteArray());
         qrCodeDetailsRepository.save(qrCodeDetails);
+        log.info("File saved in database successfully!");
         fileOutputStream.close();
 
         inputStreamResource = pdfGenerator.InputStreamResource(pngData);

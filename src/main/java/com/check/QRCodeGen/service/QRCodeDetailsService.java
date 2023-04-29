@@ -12,4 +12,5 @@ public interface QRCodeDetailsService {
 
     ResponseEntity<InputStreamResource> saveCustomerDetails(QRCodeDetails qrCodeDetails) throws DocumentException, IOException, WriterException;
 
+    public void printAspect();
 }
